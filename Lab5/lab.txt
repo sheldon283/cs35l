@@ -1,0 +1,143 @@
+Sheldon Dong
+
+1. I first created my tr2b.c and tr2u.c files. These two files are supposed to act
+   similarily to the tr command, with two parameters "from" and "to". It also takes an 
+   input from STDIN. There are only few differences between the two. tr2b.c uses the
+   buffered I/O using getchar and putchar, while tr2u.c uses read and write using syscalls.
+   They both checked for errors such as the wrong number of operands, duplicate bytes, or if
+   both from and to are the same length.
+
+2. I then compiled them with the following:
+   $ gcc -o tr2b tr2b.c
+   $ gcc -o tr2u tr2u.c	
+
+3. I then generated a 5000000 byte file using the command:
+   $ dd if=/dev/urandom of=input.txt bs=5000000 count=1
+
+4. I then used the strace command to compare the system calls issued by the tr2b and tr2u
+   commands when copying one file to another and when coppying a file to my terminal
+   I used the commands:
+   $ strace -c ./tr2b 'a' 'b' < input.txt > bOut
+
+   This outputs: 
+   % time     seconds  usecs/call     calls    errors syscall
+   ------ ----------- ----------- --------- --------- ----------------
+    36.13    0.000056           6         9           mmap
+    22.58    0.000035           9         4           mprotect
+    10.97    0.000017          17         1           write
+     8.39    0.000013           7         2           read
+     8.39    0.000013           3         4           fstat
+     8.39    0.000013          13         1           munmap
+     2.58    0.000004           2         2           close
+     2.58    0.000004           4         1           arch_prctl
+     0.00    0.000000           0         2           open
+     0.00    0.000000           0         1           brk
+     0.00    0.000000           0         1         1 access
+     0.00    0.000000           0         1           execve
+   ------ ----------- ----------- --------- --------- ----------------
+   100.00    0.000155                    29         1 total
+
+   For the second c file, I used the command:
+   $ strace -c ./tr2u 'a' 'b' < input.txt > uOut
+
+   This outputted:
+   % time     seconds  usecs/call     calls    errors syscall
+   ------ ----------- ----------- --------- --------- ----------------
+    54.86   26.069691           5   5000000           write
+    45.14   21.453431           4   5000002           read
+     0.00    0.000050           7         7           mmap
+     0.00    0.000035           9         4           mprotect
+     0.00    0.000019          10         2           open
+     0.00    0.000012          12         1           munmap
+     0.00    0.000009           5         2           fstat
+     0.00    0.000009           9         1         1 access
+     0.00    0.000008           4         2           close
+     0.00    0.000007           7         1           execve
+     0.00    0.000005           5         1           brk
+     0.00    0.000004           4         1           arch_prctl
+   ------ ----------- ----------- --------- --------- ----------------
+   100.00   47.523280              10000024         1 total
+
+   Now, I have to test strace when just copying to terminal. For tr2b, I use the command:
+   $ strace -c ./tr2b 'a' 'b' < input.txt
+     
+   This outputs:
+   % time     seconds  usecs/call     calls    errors syscall
+   ------ ----------- ----------- --------- --------- ----------------
+    27.78    0.000035           4         9           mmap
+    17.46    0.000022           6         4           mprotect
+    10.32    0.000013           7         2           read
+     9.52    0.000012           6         2           open
+     8.73    0.000011          11         1           write
+     7.14    0.000009           2         4           fstat
+     7.14    0.000009           9         1           munmap
+     4.76    0.000006           6         1         1 access
+     3.17    0.000004           4         1           execve
+     1.59    0.000002           1         2           close
+     1.59    0.000002           2         1           brk
+     0.79    0.000001           1         1           arch_prctl
+   ------ ----------- ----------- --------- --------- ----------------
+   100.00    0.000126                    29         1 total
+   
+   For tr2u, I used the command:
+   $ strace -c ./tr2u 'a' 'b' < input.txt
+   
+   THis outputs:
+   % time     seconds  usecs/call     calls    errors syscall
+   ------ ----------- ----------- --------- --------- ----------------
+    52.12   26.389316           5   5000000           write
+    47.88   24.243064           5   5000002           read
+     0.00    0.000000           0         2           open
+     0.00    0.000000           0         2           close
+     0.00    0.000000           0         2           fstat
+     0.00    0.000000           0         7           mmap
+     0.00    0.000000           0         4           mprotect
+     0.00    0.000000           0         1           munmap
+     0.00    0.000000           0         1           brk
+     0.00    0.000000           0         1         1 access
+     0.00    0.000000           0         1           execve
+     0.00    0.000000           0         1           arch_prctl
+   ------ ----------- ----------- --------- --------- ----------------
+   100.00   50.632380              10000024         1 total
+
+   Since tr2b is using getchar and putchar and storing bytes into buffers, there are fewer
+   syscalls made. However, in tr2u, for each byte, there are two syscalls being called,
+   read and write. SInce there are 5000000 bytes, there will be 5000000 writes and the extra
+   2 in the read is from the fstat read. So obviously, tr2u will be slower. We also see that
+   in strace for copying to output and copying to terminal, the number of syscalls are the
+   same. 
+   
+5. I then test the time command:
+   tr2b:
+   copying to output:
+   $ time ./tr2b 'a' 'b' < input.txt > bOut
+
+   real    0m0.003s
+   user    0m0.000s
+   sys     0m0.001s
+
+   copying to terminal:
+   $ time ./tr2b 'a' 'b' < input.txt 
+   
+   real    0m0.001s
+   user    0m0.000s
+   sys     0m0.001s
+
+   tr2u:
+   copying to output:
+   $ time ./tr2u 'a' 'b' < input.txt > uOut
+
+   real    0m7.234s
+   user    0m0.307s
+   sys     0m6.880s
+
+   copying to terminal:
+   $ time ./tr2u 'a' 'b' < input.txt
+
+   real    0m7.456s
+   user    0m0.335s
+   sys     0m7.025s
+
+   In conclusion, we can say that putchar and getchar are a lot faster than read and write.
+   So buffered I/O is a lot faster than unbuffered I/O because this allows fewer syscalls
+   and therefore faster runtime.   

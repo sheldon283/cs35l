@@ -1,0 +1,68 @@
+Sheldon Dong
+004784870
+
+1. First, I check whether our sort is up-to-date using the command:
+   $ /usr/local/cs/bin/sort --version
+
+   This outputs:
+   sort (GNU coreutils) 8.28
+
+   So our sort function is up-to-date
+
+2. We then generate a file containing 10,000,000 ramdom single-precision floating point
+   numbers, in textual form, one per line with no white space, using dev/urandom and the
+   od command. The command I used was:
+   $ od -An -f -N 40000000 < /dev/urandom | tr -s ' ' '\n' | sed '1d' > random.txt
+
+   Since each single-precision floating point number is 4 bytes big, we need to create 
+   40000000 bytes, and the -N limits the dump to the number of bytes following it. The -f 
+   option selects floats and the -An says that the file offset is set to none. We don't 
+   want any RADIX formatting of the file offset addresses. The sed '1d'
+   removes the extra new line at the beginning of the file. 
+
+3. We then time the command sort -g using the -p option for time. The -g gives us general
+   numeric sorting, which compares according to general numerical values. The -p option for
+   time uses the precise traditional format. The whole command is:
+   $ time -p sort -g random.txt > /dev/null
+   real 21.86
+   user 119.14
+   sys 0.73
+
+4. I then test it the sort with the --parallel option, with 1,2,4, and 8 threads. Looking at
+   info sort, we see that using --parallel sets the number of sorts running in parallel to
+   a number N, where N is limited by 8 and set to the number of available processors.
+   We use the command $ time -p sort -g --parallel=N random.txt > /dev/null, where N is the 
+   number of threads we want to run, namely, 1, 2, 4, and 8 for this lab:
+
+   1 thread:
+   $ time -p sort -g --parallel=1 random.txt > /dev/null
+   real 111.34
+   user 111.14
+   sys 0.19
+
+   2 threads:
+   $ time -p sort -g --parallel=2 random.txt > /dev/null
+   real 61.56
+   user 116.07
+   sys 0.66
+
+   4 threads:
+   $ time -p sort -g --parallel=4 random.txt > /dev/null
+   real 35.14
+   user 118.05
+   sys 0.46
+
+   8 threads:
+   $ time -p sort -g --parallel=8 random.txt > /dev/null
+   real 23.13
+   user 123.66
+   sys 0.85
+
+   Looking at the real times, we see that that the regular sort -g has about the same time
+   as that of sort running with 8 threads. Running sort with any amount of threads fewer 
+   than 8 had a slower real time than these two. User time remains relatively the same no 
+   matter how many threads we had, varying between 110 ad 136 seconds. It also seems that
+   system time increases as more threads are added.
+
+
+   

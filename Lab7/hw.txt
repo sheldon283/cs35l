@@ -1,0 +1,38 @@
+Sheldon Dong
+004784870
+
+1. Yes. The resulting network is still secuire if the other teams had been observing all the
+   bytes going across the network. When sending data over the network, we are using the 
+   public key of the receiver to encrypt the data. The person looking on the network can see
+   the encrypted message and the public key, but not the contents of the data. Only the 
+   receiver can decrypt the message using the receiver's private key, which is not available
+   over the network, and which no one else should have access to. So the person looking at 
+   the network shouldn't be able to decrypt the message without this private key.
+
+   If the other team had tapped our keyboards and observed all of my team's keystrokes, then
+   the data would no longer be secure. By recording all our keystrokes, they would be able 
+   to access the passphrase to the private key, allowing the other team to decrypt all the
+   data during the session. They might also be able to generate session keys from the stolen
+   passphrase and be able to login without the private key.
+
+   If I was booting off a USB and assumed the other team had temporarily had physicl control
+   of the USB, then it wouldn't be secure. If booting from a USB, this implies that the USB
+   has the kernel and OS of the environment in it, and if the other team had temporary 
+   control over it, it is possible they allowed themselves to have root access. This will
+   give them access to the .ssh folders, which woulid allow them access to all public and 
+   private keys used to set up authentication/session keys. Thus, after gaining control over
+   these keys, the other team can decrypt and encrypt messages between my team and the 
+   server whenever they want.
+
+2. gpg  --verify doesn't really verify that I personally created the tar file in question. 
+   This is because verify only compares the cleartext signature once decrypted to the 
+   decrypted key using a public key. It doesn't verify whether I personally created the tar
+   file; it only verifies the integrity and whether the signature and public key match. 
+   If someone had intercepted the data, modified the file, and signed it with their public
+   key instead, gpg verify will use this public key to decrypt the data and compare it to 
+   the sender, which will be that of the intercepter and not the original sender. It can't
+   verify the original creator.
+
+   Using a third party company/organization to keep track of the origin of each file, the 
+   author, and the intended destination. As long as we trust this third party, we can always
+   make sure the verification will be right and match.

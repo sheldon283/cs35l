@@ -1,0 +1,91 @@
+Sheldon Dong
+004784870
+
+My partner for this lab was Christopher Aziz. I first followed the instructions on Piazza
+for setup, which are as follows:
+1.  I first set up my BeagleBone Board according to the instructions specified on Piazza. So
+    I first used Putty to SSH into my BeagleBone using the ip address 192.168.7.2 as the
+    host name and "root" as the username
+
+2.  I then connect to the wifi using "connmanctl". I started the connmanctl terminal using:
+    sudo connmanctl
+
+3.  Turn on the wifi for your BeagleBone:
+    connmanctl> enable wifi
+ 
+4.  Scan all available wifi access points:
+    connmanctl> scan wifi
+ 
+5.  List all the discovered access points:
+    connmanctl> services
+ 
+6.  Register as the prospective client:
+    connmanctl> agent on
+
+7.  After you locate the access point you want to connect to, use the string next to the
+    name of the access point as the input to the following command:
+    connmanctl> connect wifi_2cf7f1066830_4352333736302d77696669_managed_psk
+
+    This connects to the wifi CR3760-wifi. The password is 3760ClassNet
+
+8.  I then quit the application
+    connmanctl> quit
+
+9.  I then update the database of apt-get:
+    sudo apt-get update
+
+10. I then install the xauth tool for X11 forwarding support for future SSH connections to 
+    my BeagleBone:
+    sudo apt-get install xauth
+
+11. I then installed Firefox on the Beaglebone to allow GUI support
+    apt-get install firefox-esr-l10n-en-gb
+
+After doing all of this, I begin the actual lab.
+13. I first create a public/private key pair using the command:
+    ssh-keygen
+
+    I kept all default values
+
+14. I then run the commands:
+    sudo useradd -d /home/chris -m chris
+    sudo passwd chris
+
+    This creates a directory for Chris named chris in the home directory and sets a password
+    for him as well. 
+
+15. I then create a ssh directory in chris's directory to store the authentication keys
+    sudo mkdir .ssh
+    sudo chown -R chris .ssh
+    sudo chmod 700 .ssh
+
+16. We then needed to figure out what our IP addresses are using the command:
+    ifconfig
+
+    After figuring out our ip addresses, Chris was able to able to ssh into my Wireless 
+    Board using my ip. He also set up a client directory I could ssh into as well.
+
+17. Now I have to ssh into Chris's BeagleBone board. I first copied my public key to the ssh
+    folder in my directory in his server:
+    ssh-copy-id -i sheldon@128.97.104.92
+
+    
+18. We then have to register our private key using the ssh-agent with the command:
+    ssh-add
+    
+    Running this, I was prompted for a password. After entering the password, I don't have 
+    need to enter a password anymore when I log in to this server again. 
+
+19. I then ssh into the server:
+    ssh sheldon@128.97.104.92
+
+20. We then have to use port forwarding so that I could run a command on the remote host 
+    so it displays on my host. I did this by running:
+    ssh -X sheldon@128.97.104.92
+
+    The -X option enables X11 forwarding, which allows us to use GUI apps on Linux.
+    I then ran:
+    xterm
+    firefox
+
+    And we noticed that it successfully opened xterm and firefox. 
