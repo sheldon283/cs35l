@@ -1,0 +1,73 @@
+#! /bin/bash
+
+dir=$1
+#echo $dir
+LIST=`ls -a $dir | grep "^\." | sort`
+
+#echo $LIST
+
+declare -a array
+
+let count=0
+
+for name in $LIST
+do
+    #if can't read file because no read permissions
+    if [ ! -r "$dir/$name" ]
+    then
+        echo "Can't read the file $dir/$name"
+    fi
+
+    #if file not symbolic and readable
+    if [[ ! -h "$dir/$name" && -r "$dir/$name" ]]
+    then
+        #Check if file is regular
+        if [ -f "$dir/$name" ]
+        then
+#           echo "HELLOOOOOOO"
+            array[$count]="$dir/$name"
+            let count=count+1
+        fi
+    fi
+done
+
+LIST=`ls $dir | sort`
+#echo $LIST
+for name in $LIST
+do
+    #if can't read file because no read permissions
+    if [ ! -r "$dir/$name" ]
+    then
+        echo "Can't read the file $dir/$name"
+    fi
+
+    #if file not symbolic and readable
+    if [[ ! -h "$dir/$name" && -r "$dir/$name" ]]
+    then
+        #Check if file is regular
+        if [ -f "$dir/$name" ]
+        then
+#           echo "HELLLLLO"
+           array[$count]="$dir/$name"
+            let count=count+1
+        fi
+    fi
+done
+let mark=0
+#echo $count
+#echo ${#array[@]}
+
+while [ $mark -lt $count ]
+do
+    let mark2=mark+1
+    while [ $mark2 -lt $count ]
+    do
+        compare=`cmp -s "${array[$mark]}" "${array[$mark2]}"`
+        if [ ! $compare ]
+        then
+            ln -f "${array[$mark2]}" "${array[$mark]}"
+        fi
+        let mark2=mark2+1
+    done
+    let mark=mark+1
+done

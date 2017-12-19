@@ -1,0 +1,55 @@
+Sheldon Dong
+004784870
+
+Q1. 'case_long_iso_time_style:' is a goto statement in a switch
+    It was removed to make the code cleaner and to clean up messy 
+    code. Because of this, removing it was unnecessary, as it would
+    have just fallen through to the next switch statement.
+
+Q2. The patched version follows the format of Month Date Year,
+    (i.e. March 2 2009), while the unpatched version shows the 
+    date in YYYY-MM-DD HH:SS (i.e. 2009-03-02 06:22). This 
+    patched version is in a format that is mainly used in the US.
+    If someone from another country, say a non-english speaking 
+    one, was using this patch, there is a chance that they would
+    not understand the date because the format is different and
+    it relies on using the English names of the months. Also,
+    the names of the months are abbreviated, which might cause	
+    more confusion
+
+Q3. The file /dev/null is a character device file on UNIX that 
+    accepts all data written to it, without storing it (i.e. it
+    is an empty file). When you run randline.py on this file, 
+    the script throws an IndexError because the script is trying
+    to access a list index that is out of range. This is because
+    we are passing in an empty file and randline.py reads from 
+    the file, assuming there is something in the file to read.
+    Since /dev/null is empty, we get an IndexError
+
+    Commands/output:
+    $ python randline.py /dev/null
+
+    Traceback (most recent call last):
+      File "randline.py", line 70, in <module>
+      	   main()
+      File "randline.py", line 64, in main
+      	   sys.stdout.write(generator.chooseline())
+      File "randline.py", line 34, in chooseline
+      	   return random.choice(self.lines)
+      File "/usr/lib/python2.7/random.py", line 275, in choice
+      	   return seq[int(self.random() * len(seq))]  # raises
+	   #IndexError if seq is empty
+    IndexError: list index out of range	
+
+Q4. If we try to invoke randline.py in Python 3 instead of 
+    Python 2, we will get an error:
+    File "randline.py", line 65
+    	 except IOError as (errno, strerror):
+         	           ^
+    SyntaxError: invalid syntax
+
+    Looking at the documentation, we see that IOError had been
+    merged into OSError from Python2 to Python3, so the syntax 
+    for it changes as well. Since the syntax is changed, running
+    the script throws a syntax error.
+       		 

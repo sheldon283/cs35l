@@ -1,0 +1,90 @@
+Sheldon Dong
+004784870
+
+1.  First we check if our locale value is en_US.UTF-8 by running:
+    locale
+   
+    If it isn't, we export it using the command:
+    export LC_ALL='en_US.UTF-8'
+
+2.  Then download the Coreutils7.6 tar file to my directory
+    using the command:
+    wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-7.6.tar.gz
+
+    Unzip it with the command:	  
+    tar -xzvf coreutils-7.6.tar.gz
+
+3.  I then change to the coreutils directory using cd:
+    cd coreutils-7.6
+
+4.  We then run the command:
+    ./configure --prefix=/u/cs/ugrad/sheldon/cs35l/lab3/coreutils
+
+    This configures all files and installs them into a new directory
+    called coreutils in the parent folder of coreutils-7.6.tar.gz
+
+5.  I then ran the commands:
+    make
+    make install
+
+    This installs coreutils-7.6 onto our computer
+
+6.  I then navigate to the bin of the coreutils directory we created using 
+    cd ../coreutils/bin
+
+7.  We then run the ls executable to see what the problem is:
+    ./ls -l 
+
+    Looking at the output, we notice that the dates are in the wrong format.
+    An example is the following:
+    -rwxr-xr-x 1 sheldon csugrad  87216 2017-10-17 17:10 unlink
+
+8.  Now it is time to apply Brady's patch. We first navigate back to the
+    coreutils-7.6 directory:
+    cd ../../coreutils-7.6
+
+9.  I then used emacs to create patch.diff, a file with Brady's patch copied
+    into it. I then ran the command:
+    patch -p1 < patch.diff
+
+10. I then run make again. This remakes the src file and applies the patch.
+    Now, e navigate to the src file in the coreutils-7.6 directory
+    and type the command:
+    ./ls -l
+
+    We see that ls -l displays the correct display behavior for the dates.
+    Example:
+    -rw-r--r-- 1 sheldon csugrad  23091 Sep  1  2009 wc.c
+    -rw-r--r-- 1 sheldon csugrad  92528 Oct 20 17:24 wc.o
+
+11. I then create a newfile and oldfile to test the modified and old ls 
+    commands on a recently modified file and on a file that's at least
+    a year old:
+
+    touch newfile
+    touch -t 201505110936.33 oldfile
+
+    touch newfile creates a newfile that was modified
+    touch -t artificially marks old file as being more than a year old.
+    More specifically, my oldfile was given the attribute of having 
+    been last modified on 05/11/2015 at 9:36:33
+
+12. We then run the modified ls and the old ls
+
+    Unmodified command:
+    coreutils/bin/ls -l
+    
+    This outputs:
+    -rw-r--r--  1 sheldon csugrad    0 2017-10-20 18:08 newfile
+    -rw-r--r--  1 sheldon csugrad    0 2015-05-11 09:36 oldfile
+
+    Modified command:
+    coreutils-7.6/src/ls -l    
+
+    This outputs:
+    -rw-r--r--  1 sheldon csugrad        0 Oct 20 18:08 newfile
+    -rw-r--r--  1 sheldon csugrad        0 May 11  2015 oldfile
+
+    So we know that our coreutils directory had been unmodified and 
+    is still outputting the incorrect format, while our modified version
+    outputs correctly

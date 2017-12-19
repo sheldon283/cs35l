@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# remove everything except for what's between the <td></td> tags
+grep "<td>.*</td>" |
+
+#Convert all capital letters to lowercase
+tr '[:upper:]' '[:lower:]' |
+
+#delete english words, which alternates in the list
+sed -n '1~2!p' |
+
+#remove leading spaces
+sed 's/^ *//g' |
+
+#Replace ASCII grave accent with ASCII apostrophe
+sed "s/\`/\'/g" |
+
+#remove all html tags
+sed 's/<[^>]*>//g' |
+
+#replace spaces with newlines
+tr ' ' '\n' |
+
+#replace commas with newlines
+tr , '\n' |
+
+#remove empty lines
+sed  '/^$/d' |
+
+#delete any words that have non-Hawaiian letters
+sed "/[^pk'mnwlhaeiou]/d" |
+
+#Sort alphabetically, while removing duplicates
+sort -u

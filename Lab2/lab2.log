@@ -1,0 +1,141 @@
+Sheldon Dong
+004784870
+
+1. I first set the locale using the command:
+   export LC_ALL='C'
+
+2. I then sorted the words using the command:
+   sort -u /usr/share/dict/words > words
+
+3. I then downloaded the webpage using wget: 
+   wget http://web.cs.ucla.edu/classes/fall17/cs35L/assign/assign2.html
+   
+   I then copy the file from the html to text file using:
+   cp assign2.html assign2.txt
+
+4. I then run the command:
+   tr -c 'A-Za-z' '[\n*]' < assign2.txt >first.txt
+
+   Looking at first.txt, we see that this outputs each word of the file with
+   a newline everytime there is a character that is not part of the alphabet.
+   The -c option converts the set to the complement of the listed characters, 
+   i.e. operations apply to characters not in the given set. So in this command,
+   it finds everything that aren't the letters a-z or A-Z and replaces it with
+   [\n*], which basically means new line.
+
+5. The next command to run is:
+   tr -cs 'A-Za-z' '[\n*]' < assign2.txt > second.txt
+
+   Looking at second.txt, we see that this basically runs the same command as 
+   above except non-alphabet characters are replaced with a new line because of 
+   the -c, and the -s "squeezes" all these new lines intoa single new line.
+   This allows more readability in the file.
+
+6. The third command is: 
+   tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort > third.txt
+
+   Looking at third.txt, we see that this runs the exact same thing as the 
+   previous command except the content is sorted in ASCII order (because of the
+   'C' locale)
+
+7. The fourth command is:
+   tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort -u > fourth.txt
+
+   Looking at fourth.txt, this function acts like the previous, sorting in ASCII
+   order. However, the -u option will sort by unique words, and will delete all
+   duplicates and all words are displayed only once.
+
+8. The fifth command is:
+   tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort -u | comm - words
+
+   This reads the input from stdin, which is assign2.txt and compares it to
+   our words file. This displays three columns. The first column contains words 
+   unique to assign2.txt, the second tells us words unique to the file words, 
+   and the third tells us the words common to both words and assign2.txt
+
+9. The last command is:
+   tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort -u | comm -23 - words
+
+   This is the same as the previous, except that the -23 will hide columns
+   2 and 3, displaying only column 1. This means it only tells us the words that
+   are unique to assign2.txt only.
+
+10. Then we need to create our Hawaiian dictionary. I copied the webpage of the
+    english-hawaiian dictionary using the command:
+    wget http://mauimapp.com/moolelo/hwnwdseng.htm
+
+    This creates an html file called hwnwdseng.htm
+
+11. I then began creating my script called buildwords by running the command:
+    emacs buildwords.sh
+
+BUILDWORDS SCRIPT
+#!/bin/bash
+
+# remove everything except for what's between the <td></td> tags
+grep "<td>.*</td>" |
+
+#Convert all capital letters to lowercase
+tr '[:upper:]' '[:lower:]' |
+
+#delete english words, which alternates in the list
+sed -n '1~2!p' |
+
+#remove leading spaces
+sed 's/^ *//g' |
+
+#Replace ASCII grave accent with ASCII apostrophe
+sed "s/\`/\'/g" |
+
+#remove all html tags
+sed 's/<[^>]*>//g' |
+
+#replace spaces with newlines
+tr ' ' '\n' |
+
+#replace commas with newlines
+tr , '\n' |
+
+#remove empty lines
+sed  '/^$/d' |
+
+#delete any words that have non-Hawaiian letters
+sed "/[^pk'mnwlhaeiou]/d" |
+
+#Sort alphabetically, while removing duplicates
+sort -u
+
+12. I then copy the buildwords.sh to a buildwords file using:
+    cp buildwords.sh buildwords
+
+13. After creating the script, we make it executable by running:
+    chmod u+x buildwords.sh
+
+14. I then run it by using the command:
+    ./buildwords < hwnwdseng.htm >hwords
+
+Spell-Checker:
+Now, we want to find out how many words are misspelled according
+to the Hawaiian dictionary. We run the command:
+   tr '[:upper:]' '[:lower:]' < assign2.html | tr -cs "pkmnwlhae'iou"
+   "[\n*]" | sort -u | comm -23 - hwords | wc -l
+
+The first tr before the first pipe converts all uppercase letters to
+lowercase of the stdin, which is assign2.html. the tr -cs command
+replaces all characters that are not letters in the Hawaiian alphabet
+with a newline. sort -u | comm -23 - hwords | wc -l sorts unique occurences
+of words, compares it to our hawaiian dictionary hwords, and outputs
+a wordcount.
+Running this command tells us that we have 201 misspelled words
+
+We then run the assign2.html against the English dictionary using the command:
+   tr '[:upper:]' '[:lower:]' < assign2.html | tr -cs 'A-Za-z' '[\n*]'
+   | sort -u | comm -23 - words | wc -l
+This outputs 39, telling us that there are 39 misspelled English words
+Some examples of these include charset, cmp, ctype, eggert, and halau
+
+Some examples of words misspelled as English but not Hawaiian include
+halau, lau, and po
+
+Some examples of words misspelled as Hawaiian but not English include
+ail, ain, ake, hawaiian, keep, and kin
