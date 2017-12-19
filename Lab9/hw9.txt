@@ -1,0 +1,82 @@
+Sheldon Dong
+004784870
+
+1.  I first navigated to the original diffutils directory using cd and then checked out v3.0
+    of Diffutils into a new branched called "quote" using the command:
+    git checkout v3.0 -b quote
+
+2.  I then apply the patch using the command:
+    patch -p1 < quote-3.0-patch.txt
+
+3.  I then learned how to use the Emacs function add-change-log-entry-other-window (C-x 4 a)
+    I used git status to see my files and then used to emacs to access each one. I then used
+    the add-change-log-entry-other-window command to add a ChangeLog entry for my patch
+
+4.  I then add and commit my changes to the new branch using the ChangeLog entry as the 
+    commit message using the command:
+    git add .
+    git commit -F ChangeLog
+
+5.  I then generated a formatted-patch.txt using the command:
+    git format-patch -1 --stdout > formatted-patch.txt
+
+6.  My partner for this hw assignment was Christopher Aziz. I first created a new branch
+    called partner from the quote branch:
+    git checkout -b partner v3.0
+
+7.  I then used my partner's formmatted-patch.txt, called formatted2.txt, and applied it to
+    my new branch:
+    git am < formatted2.txt
+    Applying: 2017-12-04 Lawrence Nelson Lee <lawrencl@lnxsrv07.seas.ucla.edu>
+    
+    The patch was applied successfully after doing this
+
+8. I then built and ran the followign commands again:
+   ./bootstrap
+   ./configure
+   make
+   make check
+   make distdir
+
+   This entered the newly created directory diffutils-3.0.1-6fd3 and looked at the ChangeLog
+   in this directory. It was exactly the same as my partner's patch, so I could conclude 
+   that the patch was successful.
+
+9.  I then navigated to ~eggert/src/gnu/emacs using the command:
+    cd ~eggert/src/gnu/emacs
+
+    If I hadn't earlier, I then need to export the PATH using the command:
+    export PATH=/usr/local/cs/bin:$PATH
+
+    I then run the command:
+    gitk
+
+    However, Iget the following errors:
+Application initialization failed: no display name and no $DISPLAY environment
+variable
+Error in startup script: no display name and no $DISPLAY environment variable
+    while executing
+"load /usr/lib64/tk8.5/../libtk8.5.so Tk"
+    ("package ifneeded Tk 8.5.7" script)
+    invoked from within
+"package require Tk"
+    (file "/usr/local/cs/bin/gitk" line 10)
+
+    This indicates that X11 forwarding is not enabled currently on putty. I then download
+    Xming and enable X11 forwarding on putty and repeat the above steps. This time, when
+    I run gitk, a new window pops up. Looking through it, we see that the newest merge point
+    that is not newer than 2015-01-25 is by Trevor Murphy
+
+Author: Trevor Murphy <trevor.m.murphy@gmail.com>  2015-01-25 23:56:37
+Committer: Katsumi Yamaoka <yamaoka@jpl.org>  2015-01-25 23:56:37
+Parent: dafb0ef852f88f535df5527def7516a13bf63c60 (* lisp/net/shr.el (shr-make-table-1): Fix colspan typo.)
+Child:  4cdde9196fb4fafb00b0c51b908fd605274147bd (* lisp/emacs-lisp/cl-generic.el: Add a method-combination hook.)
+Branches: master, remotes/origin/master and many more (78)
+Follows: emacs-24.4
+Precedes: emacs-25.0.90
+
+lisp/gnus/nnimap.el Allow using the Google X-GM-LABELS, if present
+
+
+    I then took a screenshot and in an ASCII text file called gitk-description.txt, I
+    described the roles of subwindows that I see in the screenshot

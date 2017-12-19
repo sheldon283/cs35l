@@ -1,0 +1,17 @@
+
+1. upper half:
+   The upper left of the window shows the history of all commits and the commit messages for
+   each one. It is basically a heiarchical branch of all merges and branches.
+
+   The window to the right of this shows the authors of the commit and their email address.
+
+   The window to the right of this shows us the date and  time the commit was made
+
+2. Lower half:
+   The lower left side shows us the file changes in diff format. It is basically a ChangeLog
+   of all the commits in diff format. It provides us with information about the patch, such
+   as comments and lisp/gnus/nnimap.el and we can also see the changes from the old version
+   (in red) to the new versions (in green)
+
+   The right window shows us the files that were affected by the selected commit.
+
