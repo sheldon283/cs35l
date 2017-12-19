@@ -1,0 +1,102 @@
+Sheldon Dong
+004784870
+
+
+1. man -k [search]
+   search is the word you want to look for. 
+   Using the hint, I looked in the man pages for man to find the answer.
+
+2. /usr/bin/cp
+   /usr/bin/wc 
+   I ran the commands "which cp" and "which wc".
+   This shows us that cp and wc are located in the folders mentioned above.
+
+3. /usr/bin/X - A portable, network transparent window system 
+   for bitmap displays
+   /usr/bin/w - shows who is logged on and what they are doing
+   /usr/bin/[ - Evaluates conditional expressions
+
+   I used the command find/usr/bin -name "?" -executable.
+   This outputted the above paths.
+   To find what they do, I used the man command (man w, man [, etc).
+
+4. /etc/alternatives/emacs
+   I used the command readlink /usr/bin/emacs.
+
+5. g+s sets the group ID on execution on the current directory.  
+   o-x: remove permission to execute(or searchh for directories for others
+   I found this out using "man chmod".
+
+6. find -mtime 21
+   I used the command "man find" and 
+   read how to see the last time a file was modified.
+
+7. find / -type d -mtime -21
+   The slash "/" symbolizes we are finding at the root, 
+   and -type d indicates we are looking for directories.
+   -mtime 21 indicates we are trying to find files modified 
+   in the last three weeks.
+
+8. 293
+   I used the command find /usr/bin -type l -ls | wc -l.
+
+9. libgpg-error.so.0.10.0, modified January 26, 2014
+   I used the command ls -lt /usr/lib.
+   I found this out by running "man ls" and finding reference to time in them.
+
+10. Using man pages for locale, we see that 
+    locale gets its info based on the settings
+    of the environment variables that control the locale.
+
+11. 
+Buffer-menu-sort              M-x ... RET
+    Sort Tabulated List entries by the column at point.
+sort-columns                  M-x ... RET
+   Sort lines in region alphabetically by a certain range of columns.
+sort-fields                   M-x ... RET
+   Sort lines in region lexicographically by the ARGth field of each
+   line.
+sort-lines                    M-x ... RET
+   Sort lines in region alphabetically; argument means descending
+   order.
+sort-numeric-fields           M-x ... RET
+   Sort lines in region numerically by the ARGth field of each line.
+sort-pages                    M-x ... RET
+   Sort pages in region alphabetically; argument means descending
+   order.
+sort-paragraphs               M-x ... RET
+   Sort paragraphs in region alphabetically; argument means descending
+   order.
+sort-regexp-fields            M-x ... RET
+   Sort the text in the region region lexicographically.
+tabulated-list-col-sort       M-x ... RET
+   Sort Tabulated List entries by the column of the mouse click E.
+tabulated-list-sort           M-x ... RET
+   Sort Tabulated List entries by the column at point.
+
+   I found this out using C-h a and searching for sort in Emacs.
+
+12. 
+C-M-a  beginning-of-defun: Move backward to the beginning of a defun	
+C-M-b  backward-sexp: Move backward across one balanced expression (sexp)
+C-M-c  exit-recursive-edit: Exit from the innermost recursive edit or minibuffer
+C-M-d  down-list: Move forward down one level of parentheses
+C-M-e  end-of-defun: Move forward to next end of defun
+C-M-f  forward-sexp: Move forward across one balanced expression (sexp)
+C-M-h  mark-defun: Put mark at end of this defun, point at beginning
+
+       I found this using the commands C-h b,
+       switching to the help window using C-x o,
+       and then searching us C-s for "C-M-a". 
+       I then went through each command hyperlink for command descriptions.
+
+13. C-g cancels commands that are unwanted without having to finish it.
+
+14. Yank is basically pasting. 
+    It puts text that was killed earlier back into the program.
+
+15. I first navigated to /usr/bin, and then ran the command ls -l.
+    I then ran the command C-x d on Emacs on another terminal to run Dired.
+    Comparing the two, they look almost identical, 
+    except that Dired also gives us the current and parent directory.
+    ls -l does not
